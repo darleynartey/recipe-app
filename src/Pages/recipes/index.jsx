@@ -1,15 +1,19 @@
 import { Card, CardContent, CardMedia, Container, Grid, TextField, Typography, CardActionArea } from "@mui/material";
 import { useEffect, useState } from "react";
 import undraw_empty from '../../assets/images/undraw_empty.svg'
+import loadingIcon from '../../assets/images/loadingIcon.svg';
+import { Link } from "react-router-dom";
 
 export default function Recipes() {
     const [recipes, setRecipes] = useState([]);
     const [keyword, setKeyword] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const getRecipes = () => {
+        setLoading(true);
         //prepare url
         const url = new URL("https://api.spoonacular.com/recipes/complexSearch");
-        url.searchParams.append('apiKey', process.env. REACT_APP_SPOONACULAR_API_KEY);
+        url.searchParams.append('apiKey', process.env.REACT_APP_SPOONACULAR_API_KEY);
         url.searchParams.append('query', keyword);
         //fetch recipes from the API
         fetch(url)
@@ -22,6 +26,7 @@ export default function Recipes() {
             .catch(error => {
                 console.log(error);
             })
+            .finally(() => setLoading(false))
 
     }
     useEffect(getRecipes, [keyword]);
@@ -30,29 +35,32 @@ export default function Recipes() {
             <TextField
                 fullWidth id="outlined-basic"
                 label="Enter a keyword to search recipes and hit Enter"
-                variant="outlined" 
+                variant="outlined"
                 onKeyDown={event => event.key === 'Enter' &&
-                setKeyword(event.target.value)} /> 
-                
+                    setKeyword(event.target.value)} />
+
 
             <Grid sx={{ mt: '1rem' }} container spacing={3}>
-                {recipes.length > 0 ? recipes.map(recipe => (<Grid key={recipe.id} item xs={4}>
-                    <Card sx={{ maxWidth: 345, height: '100%' }}>
-                        <CardActionArea sx={{ height: '100%' }}>
-                            <CardMedia
-                                component="img"
-                                height="140"
-                                image={recipe.image}
-                                alt={recipe.title}
-                            />
-                            <CardContent sx={{ height: '100%' }}>
-                                <Typography gutterBottom variant="h5" component="div">
-                                    {recipe.title}
-                                </Typography>
-                            </CardContent>
-                        </CardActionArea>
-                    </Card>
-                </Grid>)) : <img src={undraw_empty} width="50"/>}
+                {loading ? <img src={loadingIcon} width="50" /> : recipes.length > 0 ? recipes.map(recipe => (
+                    <Grid key={recipe.id} item xs={4}>
+                        <Card sx={{ maxWidth: 345, height: '100%' }}>
+                            <CardActionArea sx={{ height: '100%' }}>
+                                <CardMedia
+                                    component="img"
+                                    height="140"
+                                    image={recipe.image}
+                                    alt={recipe.title}
+                                />
+                                <CardContent>
+                                    <Link to={`/recipes/${recipe.id}`}>
+                                        <Typography gutterBottom variant="h5" component="div">
+                                            {recipe.title}
+                                        </Typography>
+                                    </Link>
+                                </CardContent>
+                            </CardActionArea>
+                        </Card>
+                    </Grid>)) : <img src={undraw_empty} alt="EmptyIcon" width="50" />}
             </Grid>
         </Container>
     );

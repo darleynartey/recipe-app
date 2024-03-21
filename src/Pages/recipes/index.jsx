@@ -12,7 +12,9 @@ export default function Recipes() {
     const getRecipes = () => {
         setLoading(true);
         //prepare url
-        const url = new URL("https://api.spoonacular.com/recipes/complexSearch");
+        //const url = new URL("https://api.spoonacular.com/recipes/complexSearch");
+        const url = new URL('http://localhost:4000/recipes');
+
         url.searchParams.append('apiKey', process.env.REACT_APP_SPOONACULAR_API_KEY);
         url.searchParams.append('query', keyword);
         //fetch recipes from the API
@@ -20,7 +22,8 @@ export default function Recipes() {
             .then(response => response.json())
             .then(data => {
                 //update recipes state
-                setRecipes(data.results);
+                //setRecipes(data.results);
+                setRecipes(data);
                 //console.log(data);
             })
             .catch(error => {
@@ -42,7 +45,7 @@ export default function Recipes() {
 
             <Grid sx={{ mt: '1rem' }} container spacing={3}>
                 {loading ? <img src={loadingIcon} width="50" /> : recipes.length > 0 ? recipes.map(recipe => (
-                    <Grid key={recipe.id} item xs={4}>
+                    <Grid key={recipe._id} item xs={4}>
                         <Card sx={{ maxWidth: 345, height: '100%' }}>
                             <CardActionArea sx={{ height: '100%' }}>
                                 <CardMedia
@@ -52,7 +55,7 @@ export default function Recipes() {
                                     alt={recipe.title}
                                 />
                                 <CardContent>
-                                    <Link to={`/recipes/${recipe.id}`}>
+                                    <Link to={`/recipes/${recipe._id}`}>
                                         <Typography gutterBottom variant="h5" component="div">
                                             {recipe.title}
                                         </Typography>

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import undraw_empty from '../../assets/images/undraw_empty.svg'
 import loadingIcon from '../../assets/images/loadingIcon.svg';
 import { Link } from "react-router-dom";
+import Navbar from "../../components/navbar";
 
 export default function Recipes() {
     const [recipes, setRecipes] = useState([]);
@@ -13,10 +14,10 @@ export default function Recipes() {
         setLoading(true);
         //prepare url
         //const url = new URL("https://api.spoonacular.com/recipes/complexSearch");
-        const url = new URL('http://localhost:4000/recipes');
+        const url = new URL(`${process.env.REACT_APP_RECIPE_API_URL}/recipes`);
 
-        url.searchParams.append('apiKey', process.env.REACT_APP_SPOONACULAR_API_KEY);
-        url.searchParams.append('query', keyword);
+        // url.searchParams.append('apiKey', process.env.REACT_APP_SPOONACULAR_API_KEY);
+        // url.searchParams.append('query', keyword);
         //fetch recipes from the API
         fetch(url)
             .then(response => response.json())
@@ -34,6 +35,8 @@ export default function Recipes() {
     }
     useEffect(getRecipes, [keyword]);
     return (
+        <>
+        <Navbar/>
         <Container sx={{ my: '2rem' }} >
             <TextField
                 fullWidth id="outlined-basic"
@@ -66,6 +69,7 @@ export default function Recipes() {
                     </Grid>)) : <img src={undraw_empty} alt="EmptyIcon" width="50" />}
             </Grid>
         </Container>
+        </>
     );
 }
 
